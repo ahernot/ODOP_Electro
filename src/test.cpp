@@ -8,9 +8,9 @@
 // Copyright (C) 2009 Mike McCauley
 // $Id: MultiStepper.pde,v 1.1 2011/01/05 01:51:01 mikem Exp mikem $
 
-#include <AccelStepper.h>
+// #include <AccelStepper.h>
 #include <math.h>
-#include <Utility.h>
+// #include <Utility.h>
 
 
 // Define some steppers and the pins the will use
@@ -40,6 +40,14 @@ int x_lim = 0;
 
 
 float baseAngle = 0.45; // Smallest angle for decomposition of large angular commands
+
+
+
+int sign (float i) {
+  if (i == 0) { return 0; }
+  else if (i < 0) { return -1; }
+  else { return 1; }
+}
 
 
 void step (boolean dir, byte dirPin, byte stepperPin, int steps, int delayTime) {
@@ -92,6 +100,14 @@ float stepAngle (byte dirPin, byte stepperPin, float angleDeg, int delayTime) {
   return angleFit; // return actual angle
 }
 
+boolean checkEndStops () {
+  x_lim = digitalRead (X_LIM);
+  if (x_lim == 0) { return true; }
+  else { return false; }
+}
+
+
+
 /**
  * Check whether end stop is reached and return angleAbsolute value (given context)
  */
@@ -110,11 +126,6 @@ float updatePosition () {
 }
 
 
-boolean checkEndStops () {
-  x_lim = digitalRead (X_LIM);
-  if (x_lim == 0) { return true; }
-  else { return false; }
-}
 
 
 void setup() {
@@ -154,7 +165,7 @@ void loop() {
     while (x_lim != 0) {
 
       x_lim = digitalRead (X_LIM);
-      angleAbsolute += stepAngle (X_DIR, X_STP, 1.8, 100); // 44RPM
+      angleAbsolute += stepAngle (Y_DIR, Y_STP, 1.8, 100); // 44RPM
 
       if (iter > 100) { break; }
       iter ++;
